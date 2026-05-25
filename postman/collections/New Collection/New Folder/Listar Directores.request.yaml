@@ -1,0 +1,7 @@
+$kind: http-request
+name: Listar Directores
+url: "{{url}}/api/directores"
+method: GET
+headers:
+  Accept: application/json
+order: 3772863418427475

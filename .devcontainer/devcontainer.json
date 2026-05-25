@@ -1,0 +1,19 @@
+{
+    "name": "Laravel Dev Container",
+    "image": "mcr.microsoft.com/devcontainers/php:8.4",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "bmewburn.vscode-intelephense-client",
+                "onecentlin.laravel-extension-pack",
+                "ms-azuretools.vscode-docker",
+                "eamodio.gitlens"
+            ]
+        }
+    },
+    "postCreateCommand": "composer install && php artisan key:generate",
+    "remoteUser": "vscode",
+    "features": {
+        "ghcr.io/devcontainers/features/node:1": {}
+    }
+}
