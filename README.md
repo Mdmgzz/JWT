@@ -1,58 +1,86 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Memoria Técnica: Desarrollo, Automatización y Despliegue Seguro
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Este documento detalla la arquitectura, implementación y automatización de la API desarrollada con Laravel, abarcando desde la lógica de autenticación hasta la puesta en producción bajo estándares DevOps.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## FASE 1: Implementación de Autenticación y API
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 1. Configuración de Autenticación JWT
+Se ha integrado `tymon/jwt-auth` para la gestión de sesiones sin estado.
+- **Seguridad:** Generación de clave única mediante `php artisan jwt:secret`.
+- **Modelo:** El modelo `User` implementa la interfaz `JWTSubject` para gestionar los identificadores del token.
+- **Configuración:** El `guard api` utiliza el driver `jwt` en `config/auth.php`, con una expiración (TTL) establecida en 60 minutos.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 2. Endpoints de Autenticación (`/api/auth`)
+La API implementa autenticación mediante JSON Web Tokens, protegida por el middleware `auth:api`.
 
-## Learning Laravel
+| Método | Ruta | Descripción |
+| :--- | :--- | :--- |
+| POST | `/login` | Autentica credenciales y devuelve `access_token`. |
+| POST | `/logout` | Invalida el token actual (blacklist). |
+| POST | `/refresh` | Genera un nuevo token válido. |
+| GET | `/me` | Retorna el objeto `User` autenticado (sin password). |
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+![Descripción de la imagen](directores/imagenes/cap1/cap2.png)
+![Descripción de la imagen](directores/imagenes/cap3.png)
+![Descripción de la imagen](directores/imagenes/cap4.png)
+![Descripción de la imagen](directores/imagenes/cap5.png)
+![Descripción de la imagen](directores/imagenes/cap6.png)
+![Descripción de la imagen](directores/imagenes/cap7.png)
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 3. Protección de Rutas y Ciclo de Vida del Token
+- **Protección:** Aplicada en `routes/api.php` mediante el middleware `auth:api`. Peticiones sin token devuelven `401 Unauthorized` en formato JSON.
+- **Privacidad:** El endpoint `/me` serializa al usuario excluyendo el campo `password`.
+- **Flujo:** El cliente utiliza la cabecera `Authorization: Bearer {access_token}`. El refresco de token permite mantener la sesión activa sin reautenticación manual.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### 4. Pruebas de Integración (`tests/Feature/`)
+Se ha implementado una suite de tests automatizados bajo `PHPUnit` sobre **SQLite en memoria** (`DB_CONNECTION=sqlite`, `DB_DATABASE=:memory:`), garantizando la integridad de:
+- **Auth/:** Validación de flujo JWT y control de acceso.
+- **Directores/:** CRUD con validaciones y restricciones.
+- **Peliculas/:** Gestión con relaciones foráneas.
+- **Security/:** Pruebas transversales (expiración, ocultación de errores, protección de datos).
 
-## Agentic Development
+![Descripción de la imagen](directores/imagenes/cap1.png)
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+---
 
-```bash
-composer require laravel/boost --dev
+## FASE 2: Automatización y Puesta en Producción (DevOps)
 
-php artisan boost:install
-```
+Esta fase implementa estándares de industria para asegurar la calidad y el despliegue seguro.
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 1. Estandarización (.devcontainer)
+- **Objetivo:** Definir un entorno de desarrollo basado en contenedores Docker.
+- **Impacto:** Garantiza que cualquier colaborador trabaje con las mismas versiones de PHP, extensiones y herramientas, eliminando el problema de disparidad de entornos.
 
-## Contributing
+### 2. Integración Continua (CI Pipeline - `ci.yml`)
+Un "filtro de calidad" automático ejecutado en cada `push`/`pull request`:
+- **Linting:** Validación de estilo con `pint`.
+- **Seguridad:** Auditoría con `composer audit`.
+- **Testing:** Suite de pruebas en SQLite en memoria.
+- **Build:** Verificación de construcción de imagen Docker.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Despliegue Continuo (CD Pipeline - `cd.yml`)
+Automatización del ciclo de entrega profesional:
+- **Normalización:** Conversión a minúsculas mediante `tr '[:upper:]' '[:lower:]'` para compatibilidad con `ghcr.io`.
+- **Registro:** Construcción y publicación en **GitHub Container Registry**.
+- **Smoke Testing:** Validación funcional mediante *curl* con reintentos inteligentes post-despliegue.
 
-## Code of Conduct
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-## Security Vulnerabilities
+### 4. Seguridad y Mantenimiento
+- **Secrets:** Centralización en GitHub Secrets (no exposición de datos sensibles).
+- **Menor Privilegio:** Permisos granulares configurados en archivos YAML.
+- **Automatización:** Uso de `dependabot.yml` para auditoría y actualización semanal de dependencias.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+#### Resumen de Componentes
 
-## License
+| Archivo | Rol | Propósito |
+| :--- | :--- | :--- |
+| `.devcontainer/` | Entorno | Estandarizar el entorno de desarrollo local. |
+| `.github/workflows/ci.yml` | CI | Calidad, seguridad y tests automáticos. |
+| `.github/workflows/cd.yml` | CD | Construcción, publicación y validación. |
+| `.github/dependabot.yml` | Mantenimiento | Auditoría y actualización automática. |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+*Documentación generada para el curso de Especialización en Ciberseguridad en Entornos de TI.*

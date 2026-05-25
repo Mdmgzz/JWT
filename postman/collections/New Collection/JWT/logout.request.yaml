@@ -1,0 +1,11 @@
+$kind: http-request
+name: logout
+url: "{{url}}/api/auth/logout"
+method: POST
+headers:
+  Accept: application/json
+auth:
+  type: bearer
+  credentials:
+    token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE3NzkyMDU2MzcsImV4cCI6MTc3OTIwOTIzNywibmJmIjoxNzc5MjA1NjM3LCJqdGkiOiJMb0dZbTJvelNERHI3WmJ5Iiwic3ViIjoiMiIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.GcCK2HUkX7boFdWNjXHFuu2gUCRXcEPQprBnsaeQ-N8
+order: 3984235946000140

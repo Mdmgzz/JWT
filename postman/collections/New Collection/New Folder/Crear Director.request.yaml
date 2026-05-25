@@ -1,5 +1,0 @@
-$kind: http-request
-name: Crear Director
-url: "{{url}}/api/directors"
-method: POST
-order: 3891334870889450
