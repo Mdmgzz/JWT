@@ -22,12 +22,12 @@ La API implementa autenticación mediante JSON Web Tokens, protegida por el midd
 | POST | `/refresh` | Genera un nuevo token válido. |
 | GET | `/me` | Retorna el objeto `User` autenticado (sin password). |
 
-![Descripción de la imagen](directores/imagenes/cap1/cap2.png)
-![Descripción de la imagen](directores/imagenes/cap3.png)
-![Descripción de la imagen](directores/imagenes/cap4.png)
-![Descripción de la imagen](directores/imagenes/cap5.png)
-![Descripción de la imagen](directores/imagenes/cap6.png)
-![Descripción de la imagen](directores/imagenes/cap7.png)
+![Descripción de la imagen](Directores/imagenes/cap1/cap2.png)
+![Descripción de la imagen](Directores/imagenes/cap3.png)
+![Descripción de la imagen](Directores/imagenes/cap4.png)
+![Descripción de la imagen](Directores/imagenes/cap5.png)
+![Descripción de la imagen](Directores/imagenes/cap6.png)
+![Descripción de la imagen](Directores/imagenes/cap7.png)
 
 ### 3. Protección de Rutas y Ciclo de Vida del Token
 - **Protección:** Aplicada en `routes/api.php` mediante el middleware `auth:api`. Peticiones sin token devuelven `401 Unauthorized` en formato JSON.
@@ -41,7 +41,7 @@ Se ha implementado una suite de tests automatizados bajo `PHPUnit` sobre **SQLit
 - **Peliculas/:** Gestión con relaciones foráneas.
 - **Security/:** Pruebas transversales (expiración, ocultación de errores, protección de datos).
 
-![Descripción de la imagen](directores/imagenes/cap1.png)
+![Descripción de la imagen](Directores/imagenes/cap1.png)
 
 ---
 
