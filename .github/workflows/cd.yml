@@ -39,6 +39,11 @@ jobs:
   smoke-test:
     needs: build-and-push
     runs-on: ubuntu-latest
+    env:
+      APP_KEY: ${{ secrets.APP_KEY }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      DB_CONNECTION: sqlite
+      DB_DATABASE: ':memory:'
     steps:
       - name: Login to GHCR
         uses: docker/login-action@v3
@@ -51,7 +56,7 @@ jobs:
         run: |
           IMAGE_NAME=$(echo "ghcr.io/${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           docker pull $IMAGE_NAME:latest
-          # Ejecutamos el contenedor mapeando el puerto (asegúrate que el 9000 es el correcto en tu Dockerfile)
+          # Mapeo de puertos: asegúrate que el 9000 coincide con el puerto de tu app en el Dockerfile
           docker run -d --name app-container -p 8000:9000 $IMAGE_NAME:latest
 
       - name: Wait for service to be ready
