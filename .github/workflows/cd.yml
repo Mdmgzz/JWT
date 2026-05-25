@@ -17,7 +17,6 @@ jobs:
       - name: Prepare Image Name
         id: prep
         run: |
-          # Convertimos todo a minúsculas y guardamos en una variable de salida
           IMAGE_NAME=$(echo "ghcr.io/${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           echo "image_name=$IMAGE_NAME" >> $GITHUB_OUTPUT
 
@@ -50,12 +49,22 @@ jobs:
 
       - name: Pull and Run Container
         run: |
-          # Usamos la misma lógica de minúsculas aquí
           IMAGE_NAME=$(echo "ghcr.io/${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           docker pull $IMAGE_NAME:latest
+          # Ejecutamos el contenedor mapeando el puerto (asegúrate que el 9000 es el correcto en tu Dockerfile)
           docker run -d --name app-container -p 8000:9000 $IMAGE_NAME:latest
-          sleep 10
 
-      - name: Smoke Test
+      - name: Wait for service to be ready
         run: |
-          curl --fail http://localhost:8000/api/auth/login || exit 1
+          echo "Esperando a que el servidor inicie en el puerto 8000..."
+          for i in {1..12}; do
+            if curl -s http://localhost:8000/api/auth/login > /dev/null; then
+              echo "Servidor listo!"
+              exit 0
+            fi
+            echo "Esperando a que la app responda ($i/12)..."
+            sleep 5
+          done
+          echo "Error: El servidor no respondió a tiempo."
+          docker logs app-container
+          exit 1
