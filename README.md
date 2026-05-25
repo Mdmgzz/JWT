@@ -1,4 +1,4 @@
-# Memoria Técnica: Desarrollo, Automatización y Despliegue Seguro
+# Despliegue seguro usando JWT
 
 Este documento detalla la arquitectura, implementación y automatización de la API desarrollada con Laravel, abarcando desde la lógica de autenticación hasta la puesta en producción bajo estándares DevOps.
 
@@ -22,7 +22,7 @@ La API implementa autenticación mediante JSON Web Tokens, protegida por el midd
 | POST | `/refresh` | Genera un nuevo token válido. |
 | GET | `/me` | Retorna el objeto `User` autenticado (sin password). |
 
-![Descripción de la imagen](Directores/imagenes/cap1/cap2.png)
+![Descripción de la imagen](Directores/imagenes/cap2.png)
 ![Descripción de la imagen](Directores/imagenes/cap3.png)
 ![Descripción de la imagen](Directores/imagenes/cap4.png)
 ![Descripción de la imagen](Directores/imagenes/cap5.png)
