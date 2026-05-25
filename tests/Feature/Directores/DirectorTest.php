@@ -19,8 +19,9 @@ class DirectorTest extends TestCase
     {
         $user = User::factory()->create();
         $token = JWTAuth::fromUser($user);
+
         return [
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
             'Accept' => 'application/json',
         ];
     }
@@ -45,7 +46,7 @@ class DirectorTest extends TestCase
         $response = $this->withHeaders($this->getAuthHeaders())->getJson('/api/directores');
 
         $response->assertStatus(200)
-                 ->assertJsonCount(3);
+            ->assertJsonCount(3);
     }
 
     /**
@@ -56,7 +57,7 @@ class DirectorTest extends TestCase
         $payload = [
             'name' => 'Quentin',
             'surname' => 'Tarantino',
-            'birthdate' => '1963-03-27'
+            'birthdate' => '1963-03-27',
         ];
 
         $response = $this->withHeaders($this->getAuthHeaders())->postJson('/api/directores', $payload);
@@ -65,7 +66,7 @@ class DirectorTest extends TestCase
         $this->assertDatabaseHas('directors', [
             'name' => 'Quentin',
             'surname' => 'Tarantino',
-            'birthdate' => '1963-03-27'
+            'birthdate' => '1963-03-27',
         ]);
     }
 
@@ -76,13 +77,13 @@ class DirectorTest extends TestCase
     {
         $payload = [
             'name' => '', // Obligatorio vacío
-            'birthdate' => 'fecha-no-valida'
+            'birthdate' => 'fecha-no-valida',
         ];
 
         $response = $this->withHeaders($this->getAuthHeaders())->postJson('/api/directores', $payload);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['name', 'birthdate']);
+            ->assertJsonValidationErrors(['name', 'birthdate']);
     }
 
     /**
@@ -99,7 +100,7 @@ class DirectorTest extends TestCase
         $response->assertStatus(200);
         $this->assertDatabaseHas('directors', [
             'id' => $director->id,
-            'name' => 'Chris'
+            'name' => 'Chris',
         ]);
     }
 
@@ -129,19 +130,19 @@ class DirectorTest extends TestCase
     public function test_eliminar_director_con_peliculas_asociadas(): void
     {
         $director = Director::factory()->create();
-        
+
         // Simula la película adaptada al esquema real de tu base de datos y modelo
         $director->films()->create([
-            'title'        => 'Pulp Fiction',
+            'title' => 'Pulp Fiction',
             'release_date' => '1994-10-14',
-            'sinopsis'     => 'La vida de dos pistoleros de la mafia...',
-            'duration'     => 154,
-            'gendre'       => 'Crime',
+            'sinopsis' => 'La vida de dos pistoleros de la mafia...',
+            'duration' => 154,
+            'gendre' => 'Crime',
         ]);
 
         $response = $this->withHeaders($this->getAuthHeaders())->deleteJson("/api/directores/{$director->id}");
 
-        // Verifica que devuelva un código de error controlado (409 Conflict o 422 Unprocessable) 
+        // Verifica que devuelva un código de error controlado (409 Conflict o 422 Unprocessable)
         // porque la base de datos restringe el borrado si tiene películas (onDelete('restrict'))
         $this->assertTrue(in_array($response->getStatusCode(), [409, 422]));
     }

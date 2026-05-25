@@ -3,7 +3,6 @@
 namespace Tests\Feature\Peliculas;
 
 use App\Models\Director;
-use App\Models\Film;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -17,8 +16,9 @@ class PeliculaTest extends TestCase
     {
         $user = User::factory()->create();
         $token = JWTAuth::fromUser($user);
+
         return [
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
             'Accept' => 'application/json',
         ];
     }
@@ -27,11 +27,11 @@ class PeliculaTest extends TestCase
     {
         $director = Director::factory()->create();
         $director->films()->create([
-            'title' => 'Inception', 
-            'release_date' => '2010-07-16', 
-            'sinopsis' => 'Un thriller sobre sueños.', 
-            'duration' => 148, 
-            'gendre' => 'Sci-Fi'
+            'title' => 'Inception',
+            'release_date' => '2010-07-16',
+            'sinopsis' => 'Un thriller sobre sueños.',
+            'duration' => 148,
+            'gendre' => 'Sci-Fi',
         ]);
 
         $response = $this->withHeaders($this->getAuthHeaders())->getJson('/api/peliculas');
@@ -49,7 +49,7 @@ class PeliculaTest extends TestCase
             'sinopsis' => 'Viaje espacial.',
             'duration' => 169,
             'gendre' => 'Sci-Fi',
-            'director_id' => $director->id
+            'director_id' => $director->id,
         ];
 
         $response = $this->withHeaders($this->getAuthHeaders())->postJson('/api/peliculas', $payload);
@@ -57,7 +57,7 @@ class PeliculaTest extends TestCase
         $response->assertStatus(201);
         $this->assertDatabaseHas('films', [
             'title' => 'Interstellar',
-            'director_id' => $director->id
+            'director_id' => $director->id,
         ]);
     }
 
@@ -69,24 +69,24 @@ class PeliculaTest extends TestCase
             'sinopsis' => 'Sinopsis',
             'duration' => 180,
             'gendre' => 'Sci-Fi',
-            'director_id' => 9999 
+            'director_id' => 9999,
         ];
 
         $response = $this->withHeaders($this->getAuthHeaders())->postJson('/api/peliculas', $payload);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['director_id']);
+            ->assertJsonValidationErrors(['director_id']);
     }
 
     public function test_actualizar_pelicula(): void
     {
         $director = Director::factory()->create();
         $film = $director->films()->create([
-            'title' => 'Oppenheimer', 
-            'release_date' => '2023-07-21', 
-            'sinopsis' => 'Historia de la bomba.', 
-            'duration' => 180, 
-            'gendre' => 'Biopic'
+            'title' => 'Oppenheimer',
+            'release_date' => '2023-07-21',
+            'sinopsis' => 'Historia de la bomba.',
+            'duration' => 180,
+            'gendre' => 'Biopic',
         ]);
 
         $payload = ['title' => 'Oppenheimer (Director\'s Cut)'];
@@ -96,7 +96,7 @@ class PeliculaTest extends TestCase
         $response->assertStatus(200);
         $this->assertDatabaseHas('films', [
             'id' => $film->id,
-            'title' => 'Oppenheimer (Director\'s Cut)'
+            'title' => 'Oppenheimer (Director\'s Cut)',
         ]);
     }
 
@@ -104,11 +104,11 @@ class PeliculaTest extends TestCase
     {
         $director = Director::factory()->create();
         $film = $director->films()->create([
-            'title' => 'Memento', 
-            'release_date' => '2000-09-05', 
-            'sinopsis' => 'Un hombre sin memoria.', 
-            'duration' => 113, 
-            'gendre' => 'Mystery'
+            'title' => 'Memento',
+            'release_date' => '2000-09-05',
+            'sinopsis' => 'Un hombre sin memoria.',
+            'duration' => 113,
+            'gendre' => 'Mystery',
         ]);
 
         $response = $this->withHeaders($this->getAuthHeaders())->deleteJson("/api/peliculas/{$film->id}");
@@ -121,23 +121,23 @@ class PeliculaTest extends TestCase
     {
         $director = Director::factory()->create(['name' => 'Christopher', 'surname' => 'Nolan']);
         $film = $director->films()->create([
-            'title' => 'Dunkirk', 
-            'release_date' => '2017-07-21', 
-            'sinopsis' => 'Guerra.', 
-            'duration' => 106, 
-            'gendre' => 'War'
+            'title' => 'Dunkirk',
+            'release_date' => '2017-07-21',
+            'sinopsis' => 'Guerra.',
+            'duration' => 106,
+            'gendre' => 'War',
         ]);
 
         $response = $this->withHeaders($this->getAuthHeaders())->getJson("/api/peliculas/{$film->id}");
 
         $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'id',
-                     'title',
-                     'director' => [
-                         'id',
-                         'name'
-                     ]
-                 ]);
+            ->assertJsonStructure([
+                'id',
+                'title',
+                'director' => [
+                    'id',
+                    'name',
+                ],
+            ]);
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Director;
-use Illuminate\Database\QueryException; // Controla los frenos de integridad de la BD
+use Illuminate\Database\QueryException;
+use Illuminate\Http\Request; // Controla los frenos de integridad de la BD
 
 class DirectorController extends Controller
 {
@@ -22,16 +22,16 @@ class DirectorController extends Controller
 
         // Si viene del navegador web (Renderiza tu Blade):
         $tableData = [];
-        foreach($directores as $director){
+        foreach ($directores as $director) {
             $tableData[$director->id] = [
-                $director->name, 
-                $director->surname ?? '', 
-                $director->birth_date ?? ''
+                $director->name,
+                $director->surname ?? '',
+                $director->birth_date ?? '',
             ];
         }
         $tableData = collect($tableData);
         $header = collect(['Nombre', 'Apellido', 'Fecha nacimiento']);
-    
+
         return view('director.index', compact('tableData', 'header'));
     }
 
@@ -68,17 +68,17 @@ class DirectorController extends Controller
         $headerPeliculas = collect(['Title', 'Sinopsis', 'Duration']);
         $films = $directore->films ?? [];
         $tableData = [];
-        
-        foreach($films as $film){
+
+        foreach ($films as $film) {
             $tableData[$film->id] = [
-                $film->title, $film->sinopsis, $film->duration
+                $film->title, $film->sinopsis, $film->duration,
             ];
         }
         $tableData = collect($tableData);
-        
+
         // Renombramos la variable para tu vista show.blade.php que espera $director
-        $director = $directore; 
-        
+        $director = $directore;
+
         return view('director.show', compact('director', 'headerPeliculas', 'tableData'));
     }
 
@@ -112,13 +112,14 @@ class DirectorController extends Controller
         try {
             // Intenta borrarlo de la base de datos
             $director->delete();
+
             return response()->json(['message' => 'Director eliminado correctamente'], 200);
-            
+
         } catch (QueryException $e) {
             // Si salta la restricción de la BD por tener películas asociadas (onDelete('restrict'))
             return response()->json([
                 'error' => 'Conflict',
-                'message' => 'No se puede eliminar el director porque tiene películas asociadas.'
+                'message' => 'No se puede eliminar el director porque tiene películas asociadas.',
             ], 409);
         }
     }

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Film extends Model
 {
@@ -12,9 +12,9 @@ class Film extends Model
     protected $fillable = [
         'title',
         'release_date',
-        'sinopsis',     
-        'duration',     
-        'gendre',       
+        'sinopsis',
+        'duration',
+        'gendre',
         'director_id',
     ];
 

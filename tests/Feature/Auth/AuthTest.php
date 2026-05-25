@@ -28,11 +28,11 @@ class AuthTest extends TestCase
         ]);
 
         $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'access_token',
-                     'token_type',
-                     'expires_in'
-                 ]);
+            ->assertJsonStructure([
+                'access_token',
+                'token_type',
+                'expires_in',
+            ]);
     }
 
     /**
@@ -64,7 +64,7 @@ class AuthTest extends TestCase
         ]);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['email', 'password']);
+            ->assertJsonValidationErrors(['email', 'password']);
     }
 
     /**
@@ -75,14 +75,14 @@ class AuthTest extends TestCase
         $user = User::factory()->create();
         $token = JWTAuth::fromUser($user);
 
-        $logoutResponse = $this->withHeader('Authorization', 'Bearer ' . $token)
-                               ->postJson('/api/auth/logout');
+        $logoutResponse = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->postJson('/api/auth/logout');
 
         $logoutResponse->assertStatus(200);
 
         // Al intentar usarlo de nuevo, debe ser rechazado (Blacklist activa)
-        $retryResponse = $this->withHeader('Authorization', 'Bearer ' . $token)
-                              ->getJson('/api/auth/me');
+        $retryResponse = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->getJson('/api/auth/me');
 
         $retryResponse->assertStatus(401);
     }
@@ -95,11 +95,11 @@ class AuthTest extends TestCase
         $user = User::factory()->create();
         $token = JWTAuth::fromUser($user);
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-                         ->postJson('/api/auth/refresh');
+        $response = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->postJson('/api/auth/refresh');
 
         $response->assertStatus(200)
-                 ->assertJsonStructure(['access_token', 'token_type', 'expires_in']);
+            ->assertJsonStructure(['access_token', 'token_type', 'expires_in']);
 
         $newToken = $response->json('access_token');
         $this->assertNotEquals($token, $newToken);
@@ -116,12 +116,12 @@ class AuthTest extends TestCase
         ]);
         $token = JWTAuth::fromUser($user);
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-                         ->getJson('/api/auth/me');
+        $response = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->getJson('/api/auth/me');
 
         $response->assertStatus(200)
-                 ->assertJsonFragment(['email' => 'migue@ejemplo.com'])
-                 ->assertJsonMissingPath('password'); 
+            ->assertJsonFragment(['email' => 'migue@ejemplo.com'])
+            ->assertJsonMissingPath('password');
     }
 
     /**
@@ -140,7 +140,7 @@ class AuthTest extends TestCase
     public function test_acceso_con_token_malformado_devuelve_401(): void
     {
         $response = $this->withHeader('Authorization', 'Bearer token_inventado_y_malformado')
-                         ->getJson('/api/auth/me');
+            ->getJson('/api/auth/me');
 
         $response->assertStatus(401);
     }

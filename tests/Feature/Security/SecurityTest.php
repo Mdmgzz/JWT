@@ -23,9 +23,9 @@ class SecurityTest extends TestCase
         // Viajamos al futuro (2 horas después) para asegurar que el token haya expirado
         Carbon::setTestNow(Carbon::now()->addHours(2));
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-                         ->withHeader('Accept', 'application/json')
-                         ->getJson('/api/auth/me');
+        $response = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->withHeader('Accept', 'application/json')
+            ->getJson('/api/auth/me');
 
         $response->assertStatus(401);
 
@@ -44,7 +44,7 @@ class SecurityTest extends TestCase
 
         // Forzamos una petición que sabemos que va a fallar (404)
         $response = $this->withHeader('Accept', 'application/json')
-                         ->getJson('/api/directores/9999');
+            ->getJson('/api/directores/9999');
 
         // Verificamos que no se filtren datos de depuración en la respuesta JSON
         $response->assertJsonMissingPath('exception');

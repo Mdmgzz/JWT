@@ -1,13 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DirectorController;
 use App\Http\Controllers\FilmController;
+use Illuminate\Support\Facades\Route;
 
 // ENDPOINTS DE AUTENTICACIÓN (Agrupados bajo el prefijo 'auth')
 Route::group(['prefix' => 'auth'], function () {
-    
+
     // Login público (No requiere token)
     Route::post('login', [AuthController::class, 'login']);
 
@@ -22,5 +22,5 @@ Route::group(['prefix' => 'auth'], function () {
 // ENDPOINTS DEL CRUD (Protegidos por JWT)
 Route::middleware('auth:api')->group(function () {
     Route::apiResource('directores', DirectorController::class)->names('directors');
-    Route::apiResource('peliculas', App\Http\Controllers\FilmController::class);
+    Route::apiResource('peliculas', FilmController::class);
 });

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -16,14 +15,14 @@ class AuthController extends Controller
     {
         // validamos manualmente para asegurarnos de que devuelva un 422 con los errores JSON exactos
         $validator = Validator::make($request->all(), [
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'The given data was invalid.',
-                'errors'  => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -73,7 +72,7 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             // Accedemos a la factory del guard 'api' para el tiempo de expiración
-            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60 
+            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60,
         ]);
     }
 }
