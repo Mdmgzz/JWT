@@ -27,8 +27,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ toLowerCase(github.repository_owner) }}/${{ toLowerCase(github.event.repository.name) }}:latest
-            ghcr.io/${{ toLowerCase(github.repository_owner) }}/${{ toLowerCase(github.event.repository.name) }}:${{ github.sha }}
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ github.sha }}
 
   smoke-test:
     needs: build-and-push
@@ -43,8 +43,8 @@ jobs:
 
       - name: Pull and Run Container
         run: |
-          docker pull ghcr.io/${{ toLowerCase(github.repository_owner) }}/${{ toLowerCase(github.event.repository.name) }}:latest
-          docker run -d --name app-container -p 8000:9000 ghcr.io/${{ toLowerCase(github.repository_owner) }}/${{ toLowerCase(github.event.repository.name) }}:latest
+          docker pull ghcr.io/${{ github.repository }}:latest
+          docker run -d --name app-container -p 8000:9000 ghcr.io/${{ github.repository }}:latest
           sleep 10
 
       - name: Smoke Test
