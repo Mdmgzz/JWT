@@ -1,12 +1,12 @@
 version: 2
 updates:
-  # Mantener actualizadas tus GitHub Actions
+  # Mantener actualizadas el GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
 
-  # Mantener actualizadas tus dependencias de PHP (Composer)
+  # Mantener actualizadas las dependencias de PHP (Composer)
   - package-ecosystem: "composer"
     directory: "/"
     schedule:
